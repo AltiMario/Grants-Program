@@ -140,7 +140,7 @@ Note that convergence issues can become very complicated quickly. Based on the p
 3. Adding lemmas that help to cut down the state space
 
 
-### Modeling techniques in TLA+
+### Modeling and Abstraction techniques in TLA+
 TLA+ offers a powerful toolkit for formal modeling and verification of concurrent systems. Here are some key TLA+ modeling techniques commonly used:
 * Structure and Organization:
 	* Modules: Divide your model into smaller, manageable parts with clear dependencies and interactions.
