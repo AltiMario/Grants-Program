@@ -214,6 +214,7 @@ We can split the plan into three main sections:
 However, the '_Search of required abstractions_' would happen mainly in the '_Preamble section_'.
 A detailed list of the required steps for every section is presented below.
 
+
 ### Preamble
 
 1. Sketch proofs of section 2 lemmas
@@ -254,6 +255,79 @@ A detailed list of the required steps for every section is presented below.
 30. Proof of lemma 4.8.
 31. Proof of lemma 4.9.
 32. Proof of intermediate lemmas.
+
+
+### Modelling in COQ.
+
+Most of the structures if not all of them, may be functions that depend on time. 
+For example a set of voters is in fact a function. 
+
+```
+(V (r:RoundNumber) (t:Time) (v:Voter)) -> Set Votes
+```
+
+Since COQ is a dependent type language we let open the possibility of using 
+dependent types instead of regular functions. Further investigation about this
+is needed, but the general approach is the same.
+
+Now suppose that we use the following property in the proof of some lemma:
+
+```
+For every voting set V and every round R, there's a time T after
+which the voter v finds that V is constant
+```
+
+To be able to use it in the lemma we may modify the lemma to include it in the
+statement of the lemma like:
+
+```
+Lemma SomeLemma : ...
+    -> ( new_hyp : forall (r:RoundNumber) (v:Voter) . 
+        exist ((t_max /\ V_max): Time /\ Set Votes)  
+            (forall (t:Time) .
+                (t>t_max = True) ->  V(r,t,v) = V_max )
+    )
+    ...
+```
+
+Of course doing it like this is unergonomic from the point of view of 
+programming, instead we may end using `classes` or `modules` to 
+reuse the property with ease.
+
+Then we would have a class like:
+
+```
+class VoteSetProperties : Prop :={
+    ...
+    get_maximum_changes : 
+        forall (r:RoundNumber) (v:Voter) . 
+            exist ((t_max /\ V_max): Time /\ Set Votes)  
+                (forall (t:Time) .
+                    (t>t_max = True) ->  V(r,t,v) = V_max )
+    ;
+    ...
+}
+```
+
+And the lemma would simplify the inclusion of this assumption as :
+
+```
+Lemma SomeLema: ... -> (vote_properties: VoteSetProperties) -> ..
+```
+
+We may need to this process with care, since we may end including a false
+statement by accident. This means that we would restrict this technique 
+to facts that we already know that are true.
+
+This technique applied to the gossip network will allow us to forget 
+about the network and concentrate on the concerning proofs.
+
+A consequence of this is that we simplify the model. 
+A downside is that the proofs validity would depend on the 
+validity of the properties on the real network used. The 
+same applies to the code generated (if any).
+
+
 
 ### Disclaimer on code extraction
 
