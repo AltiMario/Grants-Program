@@ -173,7 +173,7 @@ In the final deliverable we will give proper comments and discussion on the abst
 
 ### **_The proof approach_**
 
-When mathematicians write proofs with 'pen and paper', they need to review them by themselves multiple times before they share them with the mathematical community. Even then they need to pass the scrutiny of multiple pairs before the proofs can be accepted. Although this process exists and is followed rigorously, mistakes can happen, and invalid results can reach the public, in those cases, mathematicians usually offer new proofs of statements and in very rare cases they retract the results.
+When mathematicians write proofs with 'pen and paper', they need to review them by themselves multiple times before they share them with the mathematical community. Even then they need to pass the scrutiny of multiple peers before the proofs can be accepted. Although this process exists and is followed rigorously, mistakes can happen, and invalid results can reach the public, in those cases, mathematicians usually offer new proofs of statements and in very rare cases they retract the results.
 
 Proof assistants are more rigorous than people in the sense that unless we explicitly request for exculpation of proof, the proof assistant would reject to accept a non-rigorous proof.
 
@@ -259,26 +259,27 @@ A detailed list of the required steps for every section is presented below.
 
 ### Modelling in COQ.
 
-Most of the structures if not all of them, may be functions that depend on time. 
-For example a set of voters is in fact a function. 
+Most of the structures, may be functions that depend on time. 
+For example, a set of voters is, a function. 
 
 ```
 (V (r:RoundNumber) (t:Time) (v:Voter)) -> Set Votes
 ```
 
-Since COQ is a dependent type language we let open the possibility of using 
+Since COQ is a dependent type language we leave open the possibility of using 
 dependent types instead of regular functions. Further investigation about this
 is needed, but the general approach is the same.
 
-Now suppose that we use the following property in the proof of some lemma:
+To illustrate our approach, consider a case in which we want to include
+the following property in the proof of some lemma:
 
 ```
 For every voting set V and every round R, there's a time T after
 which the voter v finds that V is constant
 ```
 
-To be able to use it in the lemma we may modify the lemma to include it in the
-statement of the lemma like:
+To be able to use this property in the lemma we can modify the lemma to include it 
+in the statement of the lemma:
 
 ```
 Lemma SomeLemma : ...
@@ -290,9 +291,9 @@ Lemma SomeLemma : ...
     ...
 ```
 
-Of course doing it like this is unergonomic from the point of view of 
-programming, instead we may end using `classes` or `modules` to 
-reuse the property with ease.
+However, doing it this way is not ergonomic from the point of view of 
+programming. Instead, we can use `classes` or `modules` to 
+reuse this property with ease.
 
 Then we would have a class like:
 
@@ -309,23 +310,25 @@ class VoteSetProperties : Prop :={
 }
 ```
 
-And the lemma would simplify the inclusion of this assumption as :
+The lemma would simplify the inclusion of this assumption:
 
 ```
 Lemma SomeLema: ... -> (vote_properties: VoteSetProperties) -> ..
 ```
 
-We may need to this process with care, since we may end including a false
-statement by accident. This means that we would restrict this technique 
-to facts that we already know that are true.
+However, care has to be taken not to include a false statement by accident.
+This means that we have to restrict this technique to facts that 
+are already known to be true.
 
 This technique applied to the gossip network will allow us to forget 
-about the network and concentrate on the concerning proofs.
+about the network and concentrate on the parts of the proofs we 
+are really interested.
 
-A consequence of this is that we simplify the model. 
+As a result of this we simplify the model. 
+
 A downside is that the proofs validity would depend on the 
-validity of the properties on the real network used. The 
-same applies to the code generated (if any).
+validity of the properties which the real network has.
+The same applies to the code generated (if any).
 
 
 
